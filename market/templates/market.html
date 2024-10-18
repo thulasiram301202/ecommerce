@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Available Items Section -->
+    <h3 class="text-dark">Available Items</h3>  <!-- Changed text color to black -->
+    {% if items %}
+        <ul class="list-group">
+            {% for item in items %}
+                <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white">
+                    <span>{{ item.name }} - Rs.{{ item.price }}</span>
+
+                    <!-- Buttons for Purchase and More Info -->
+                    <div>
+                        <!-- Trigger the purchase confirmation modal -->
+                        <button type="button" class="btn btn-outline-success btn-sm" data-toggle="modal" data-target="#PurchaseModal-{{ item.id }}">
+                            Purchase
+                        </button>
+                        <button type="button" class="btn btn-outline-info btn-sm ml-2" data-toggle="modal" data-target="#InfoModal-{{ item.id }}">
+                            More Info
+                        </button>
+                    </div>
+                </li>
+
+                <!-- Modal for More Info -->
+                <div class="modal fade" id="InfoModal-{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel-{{ item.id }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content bg-dark text-white">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="infoModalLabel-{{ item.id }}">{{ item.name }}</h5>
+                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <h6>Description:</h6>
+                                <p>{{ item.description }}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal for Purchase Confirmation -->
+                <div class="modal fade" id="PurchaseModal-{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="purchaseModalLabel-{{ item.id }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content bg-dark text-white">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="purchaseModalLabel-{{ item.id }}">Confirm Purchase</h5>
+                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <h6>Are you sure you want to purchase:</h6>
+                                <p><strong>{{ item.name }}</strong> for <strong>Rs.{{ item.price }}</strong>?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <!-- Form to submit the purchase -->
+                                <form method="POST" action="{{ url_for('purchase_item', item_id=item.id) }}" class="form-inline d-inline">
+                                    {{ purchase_form.hidden_tag() }}
+                                    <input type="hidden" name="purchase_item" value="{{ item.name }}">
+                                    <button type="submit" class="btn btn-outline-success">Confirm Purchase</button>
+                                </form>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-warning">No items available for purchase.</p>
+    {% endif %}
+</div>
+
+<!-- Owned Items Section -->
+<!-- Owned Items Section -->
+<div class="container mt-4">
+  <h3 class="text-dark">Your Owned Items</h3>  
+  {% if owned_items %}
+      {% for owned_item in owned_items %}
+          <!-- Modal Trigger Button -->
+          <button type="button" class="btn btn-outline-dark mb-2" data-toggle="modal" data-target="#SalesModal-{{ owned_item.id }}">
+              Sell {{ owned_item.name }}
+          </button>
+
+          <!-- Modal Structure -->
+          <div class="modal fade" id="SalesModal-{{ owned_item.id }}" tabindex="-1" role="dialog" aria-labelledby="salesModalLabel-{{ owned_item.id }}" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                  <div class="modal-content bg-dark text-white">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="salesModalLabel-{{ owned_item.id }}">{{ owned_item.name }}</h5>
+                          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                          </button>
+                      </div>
+                      <div class="modal-body">
+                          <form method="post" action="{{ url_for('sell_item', item_id=owned_item.id) }}">
+                              {{ sell_form.hidden_tag() }}
+                              <h4 class="text-center">Do you want to sell {{ owned_item.name }} for Rs.{{ owned_item.price }}?</h4>
+                              <input type="hidden" name="sell_item" value="{{ owned_item.name }}">
+                              <button type="submit" class="btn btn-outline-danger btn-block">Sell</button>
+                          </form>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-warning">You have no owned items.</p>
+    {% endif %}
+</div>
+{% endblock %}

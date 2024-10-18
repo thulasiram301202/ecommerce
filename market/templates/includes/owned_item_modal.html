@@ -1,0 +1,38 @@
+<style>
+  .modal-content {
+    background-color: #212121;
+    color: white;
+  }
+</style>
+
+<!-- Sell Modal -->
+<div class="modal fade" id="SellModal-{{ owned_item.id }}" tabindex="-1" role="dialog" aria-labelledby="SellModalLabel-{{ owned_item.id }}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="SellModalLabel-{{ owned_item.id }}">{{ owned_item.name }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{{ url_for('sell_item', item_id=owned_item.id) }}">
+          {{ sell_form.hidden_tag() }}
+          <h4 class="text-center">
+            Do you want to sell {{ owned_item.name }} for Rs.{{ owned_item.price }}?
+          </h4>
+          <br>
+          <h6 class="text-center">
+            By clicking sell item, you are confirming the sale of this item!
+          </h6>
+          <br>
+          <input id="sell_item" name="sell_item" type="hidden" value="{{ owned_item.name }}">
+          {{ sell_form.submit(class="btn btn-outline-danger btn-block") }}
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
